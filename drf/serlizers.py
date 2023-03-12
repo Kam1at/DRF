@@ -6,11 +6,13 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = (
+            'id',
             'name',
             'description',
             'preview',
             'link',
-            'course_set'
+            'course_set',
+            'owner'
         )
 
 
@@ -25,7 +27,8 @@ class CourseSerializer(serializers.ModelSerializer):
             'preview',
             'description',
             'all_lesson',
-            'lessons'
+            'lessons',
+            'owner'
         )
 
         def get_all_lesson(self, instance):

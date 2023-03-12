@@ -32,6 +32,7 @@ class Course(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название')
     preview = models.FileField(verbose_name='Превью')
     description = models.CharField(max_length=250, verbose_name='Описание')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name} {self.preview} {self.description}'
@@ -45,8 +46,9 @@ class Lesson(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название')
     description = models.CharField(max_length=250, verbose_name='Описание')
     preview = models.FileField(verbose_name='Превью')
-    link = models.CharField(max_length=200, verbose_name='Ссылка на видео')
+    link = models.URLField(max_length=200, verbose_name='Ссылка на видео')
     course_set = models.ForeignKey(Course, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name} {self.description} {self.preview} {self.link}'
