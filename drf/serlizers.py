@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 
-from drf.models import Course, Lesson, Subscribe, User, Payment
+from drf.models import Course, Lesson, Subscribe, User, Payment, PaymentLog
 from drf.validators import YouTubeLinkValidator
 
 
@@ -38,6 +38,12 @@ class PaymentSerializer(serializers.ModelSerializer):
             'payment_sum',
             'payment_type'
         )
+
+
+class PaymnetlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentLog
+        fields = '__all__'
 
 
 class CourseSerializer(serializers.ModelSerializer):
