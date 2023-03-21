@@ -48,7 +48,7 @@ class PaymnetlogSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     all_lesson = serializers.SerializerMethodField()
-    lessons = LessonSerializer(many=True, source='lesson_set', required=False)
+    lessons = LessonSerializer(many=True, source='lesson_set', required=False, read_only=True)
     subscription = serializers.SerializerMethodField()
 
     class Meta:

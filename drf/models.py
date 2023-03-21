@@ -80,6 +80,7 @@ class Payment(models.Model):
 class PaymentLog(models.Model):
     Success = models.BooleanField(verbose_name='успешность платежа')
     ErrorCode = models.CharField(max_length=250, verbose_name='код ошибки')
+    Description = models.CharField(max_length=250, verbose_name='описание', default='test')
     TerminalKey = models.CharField(max_length=250, verbose_name='ключ терминала')
     Status = models.CharField(max_length=250, verbose_name='статус платежа')
     PaymentId = models.CharField(max_length=250, verbose_name='айди платежа')

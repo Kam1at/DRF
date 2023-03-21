@@ -1,16 +1,15 @@
 import datetime
-
 from django.contrib.sites import requests
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics, status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from config import settings
 from drf.models import Course, Lesson, Subscribe, User, Payment, PaymentLog
 from drf.permissions import OwnerPerms, ModerPerms, OwnerSubscribePerm
 from drf.serlizers import CourseSerializer, LessonSerializer, SubscribeSerializer, PaymentSerializer, \
     PaymnetlogSerializer
+from drf.tasks import subscribed_message, payment_status_check
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -43,6 +42,14 @@ class CourseViewSet(viewsets.ModelViewSet):
             request.data['owner'] = request.user.pk
             answer = super().create(request, *args, **kwargs)
         return answer
+
+    def perform_update(self, serializer):
+        self.object = serializer.save()
+        subscribed_message.delay(self.object.pk)
+
+    def perform_create(self, serializer):
+        self.object = serializer.save()
+        subscribed_message.delay(self.object.pk)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -180,18 +187,17 @@ class PaymentAPIView(APIView):
 
         response = requests.post('https://securepay.tinkoff.ru/v2/Init/', json=data_for_request)
 
-        PaymentLog.objects.create(
-            Success=response.json()['Success'],
-            ErrorCode=response.json()['ErrorCode'],
-            TerminalKey=response.json()['TerminalKey'],
-            Status=response.json()['Status'],
-            PaymentId=response.json()['PaymentId'],
-            OrderId=response.json()['OrderId'],
-            Amount=response.json()['Amount'],
-            PaymentURL=response.json()['PaymentURL']
-        )
-
         if response.json()['Success']:
+            PaymentLog.objects.create(
+                Success=response.json()['Success'],
+                ErrorCode=response.json()['ErrorCode'],
+                TerminalKey=response.json()['TerminalKey'],
+                Status=response.json()['Status'],
+                PaymentId=response.json()['PaymentId'],
+                OrderId=response.json()['OrderId'],
+                Amount=response.json()['Amount'],
+                PaymentURL=response.json()['PaymentURL']
+            )
             Subscribe.objects.create(
                 student=self.request.user,
                 course=course_item
