@@ -27,6 +27,7 @@ def subscribed_message(course_pk):
     course.save()
 
 
+@shared_task
 def payment_status_check():
     payment_list = PaymentLog.objects.all()
     SSH_DICT = {}
