@@ -16,6 +16,9 @@ pip3 install psycopg2
 
 Домашнее задание №2 по Docker:
 Для того, чтобы развернуть контейнер, необходимо в консоли, находясь в корне проекта, выполнить команды:
+
 docker-compose build
+
 docker-compose up
+
 docker-compose exec app python manage.py migrate
